@@ -9,7 +9,7 @@ function fetchShopData() {
                 const div = document.createElement('div');
                 div.className = 'shop';
                 div.innerHTML = `<strong>品牌名：</strong>${shop.brand}<br>
-                                 <strong>地址：</strong>${shop.address}<br>
+                                 <strong>地址：</strong>${shop.city} ${shop.district}, ${shop.detailed}<br>
                                  <strong>排队时间：</strong>${shop.queueTime}分钟`;
                 shopList.appendChild(div);
             });
@@ -32,7 +32,9 @@ document.getElementsByClassName('close')[0].addEventListener('click', function()
 document.getElementById('addShopForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const brandName = document.getElementById('brandName').value;
-    const address = document.getElementById('address').value;
+    const city = document.getElementById('city').value + "市";
+    const district = document.getElementById('district').value + "区";
+    const detailedAddress = document.getElementById('detailedAddress').value;
     const queueTime = document.getElementById('queueTime').value;
 
     fetch('/addTeaShop', {
@@ -40,7 +42,13 @@ document.getElementById('addShopForm').addEventListener('submit', function(event
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ brandName: brandName, address: address, queueTime: parseInt(queueTime) })
+        body: JSON.stringify({
+            brandName: brandName,
+            city: city,
+            district: district,
+            detailedAddress: detailedAddress,
+            queueTime: parseInt(queueTime)
+        })
     })
     .then(response => response.json())
     .then(data => {

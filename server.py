@@ -33,14 +33,28 @@ def get_shop_data():
     conn.close()
     return data
 
-def insert_tea_shop(brand_name, address, queue_time):
+def insert_address(city, district, detailed_address):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # 使用 OUTPUT 子句直接返回新插入的 ID
+    sql = '''
+        INSERT INTO Addresses (City, District, DetailedAddress)
+        OUTPUT INSERTED.AddressID
+        VALUES (?, ?, ?);
+    '''
+    cursor.execute(sql, (city, district, detailed_address))
+    address_id = cursor.fetchone()[0]  # 获取插入的ID
+    conn.commit()
+    cursor.close()
+    return address_id
+
+
+
+def insert_tea_shop(brand_name, address_id, queue_time):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute('''
-            INSERT INTO TeaShops (BrandName, Address, QueueTime)
-            VALUES (?, ?, ?)
-        ''', (brand_name, address, queue_time))
+        cursor.execute('INSERT INTO TeaShops (BrandName, AddressID, QueueTime) VALUES (?, ?, ?)', (brand_name, address_id, queue_time))
         conn.commit()  # 不要忘记提交事务
     except Exception as e:
         print("Error inserting into database: ", e)
@@ -57,12 +71,13 @@ def index():
 @app.route('/teashops')
 def tea_shops():
     data = get_shop_data()
-    return jsonify([{'brand': row[0], 'address': row[1], 'queueTime': row[2]} for row in data])
+    return jsonify([{'brand': row[0], 'city': row[1], 'district': row[2], 'detailed': row[3], 'queueTime': row[4]} for row in data])
 
 @app.route('/addTeaShop', methods=['POST'])
 def add_tea_shop():
     data = request.get_json()
-    success = insert_tea_shop(data['brandName'], data['address'], data['queueTime'])
+    address_id = insert_address(data['city'], data['district'], data['detailedAddress'])
+    success = insert_tea_shop(data['brandName'], address_id, data['queueTime'])
     if success:
         return jsonify({"message": "店铺添加成功"})
     else:
