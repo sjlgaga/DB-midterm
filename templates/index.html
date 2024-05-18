@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>奶茶店信息</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>奶茶店列表</h1>
+    <button id="refreshButton">刷新信息</button>
+    <button id="addShopButton">添加店铺</button>
+    <div id="shopList" class="shop-list"></div>
+
+    <div id="addShopModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="addShopForm">
+                <input type="text" id="brandName" name="brandName" placeholder="品牌名" required>
+                <input type="text" id="address" name="address" placeholder="地址" required>
+                <input type="number" id="queueTime" name="queueTime" placeholder="排队时间（分钟）" required>
+                <button type="submit">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
