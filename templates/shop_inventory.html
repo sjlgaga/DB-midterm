@@ -8,7 +8,29 @@
 </head>
 <body>
     <h1>店铺库存信息</h1>
+    <button id="addTeaButton" class="action-button">增加奶茶</button>
+    <button id="refreshInventoryButton" class="action-button">刷新库存</button>
+    <button id="deleteTeaButton" class="action-button">删除奶茶</button>
     <div id="inventoryList"></div>
+
+        <!-- 模态对话框用于添加库存 -->
+    <div id="addTeaModal" style="display:none;">
+        <h2>选择奶茶添加到库存</h2>
+        <select id="teaSelect">
+            <!-- 奶茶选项将通过JavaScript动态填充 -->
+        </select>
+        <input type="number" id="stockInput" placeholder="库存数量" min="1">
+        <button onclick="addTeaToInventory()">添加到库存</button>
+    </div>
+
+    <div id="deleteTeaModal" style="display:none;">
+        <h2>选择要删除的奶茶</h2>
+        <select id="deleteTeaSelect">
+            <!-- 奶茶选项将通过JavaScript动态填充 -->
+        </select>
+        <button onclick="deleteTeaFromInventory()">删除</button>
+    </div>
+    
     <script src="static/inventory.js"></script>
 </body>
 </html>
