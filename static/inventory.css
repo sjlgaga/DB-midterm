@@ -1,0 +1,42 @@
+/* 全局样式设置 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 确保所有内容在中间 */
+}
+
+/* 标题样式 */
+h1 {
+    color: #5a5a5a;
+    text-align: center;
+}
+
+/* 库存列表样式 */
+#inventoryList {
+    width: 80%; /* 控制库存列表的宽度 */
+    max-width: 600px; /* 最大宽度，适应屏幕大小 */
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 使所有库存项居中 */
+}
+
+/* 单个库存项样式 */
+.inventory-item {
+    background-color: #ffffff;
+    margin-bottom: 10px; /* 库存项之间的间距 */
+    width: 100%; /* 使库存项填充整个容器宽度 */
+    padding: 15px; /* 内部间距 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加阴影 */
+    text-align: center; /* 文本居中 */
+    border-radius: 5px; /* 轻微圆角 */
+}
+
+.inventory-item:last-child {
+    margin-bottom: 0; /* 最后一个项目不需要底部边距 */
+}

@@ -11,6 +11,9 @@ function fetchShopData() {
                 div.innerHTML = `<strong>品牌名：</strong>${shop.brand}<br>
                                  <strong>地址：</strong>${shop.city} ${shop.district}, ${shop.detailed}<br>
                                  <strong>排队时间：</strong>${shop.queueTime}分钟`;
+                div.onclick = function() {
+                    window.location.href = `/shop_inventory.html?shopId=${shop.shopId}`; // 确保后端能解析此 URL
+                    };
                 shopList.appendChild(div);
             });
         })
