@@ -267,3 +267,16 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const shopId = params.get('shopId');
+
+    const viewCommentsButton = document.getElementById('viewCommentsButton');
+    if (shopId && viewCommentsButton) {
+        viewCommentsButton.onclick = function() {
+            window.location.href = `/viewComments.html?shopId=${shopId}`;
+        };
+    } else {
+        console.error('Shop ID is missing from the URL or button not found.');
+    }
+});

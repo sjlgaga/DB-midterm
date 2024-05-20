@@ -1,0 +1,39 @@
+/* comments.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 确保所有内容在中间 */
+}
+
+h1 {
+    color: #5a5a5a;
+    text-align: center;
+}
+
+#commentsList {
+    width: 80%; /* 控制评论列表的宽度 */
+    max-width: 600px; /* 最大宽度，适应屏幕大小 */
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 使所有评论项居中 */
+}
+
+.comment-item {
+    background-color: #ffffff;
+    margin-bottom: 10px; /* 评论项之间的间距 */
+    width: 100%; /* 使评论项填充整个容器宽度 */
+    padding: 15px; /* 内部间距 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加阴影 */
+    text-align: center; /* 文本居中 */
+    border-radius: 5px; /* 轻微圆角 */
+}
+
+.comment-item:last-child {
+    margin-bottom: 0; /* 最后一个项目不需要底部边距 */
+}
