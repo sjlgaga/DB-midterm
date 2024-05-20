@@ -56,3 +56,33 @@ h1 {
 .action-button:hover {
     background-color: #0056b3; /* 深蓝色背景，鼠标悬停效果 */
 }
+
+/* 样式增强的手机号输入框 */
+#phoneNumberInput {
+    padding: 10px 15px;           /* 增加内边距，使文本框更宽敞 */
+    border: 1px solid #ccc;       /* 设置边框颜色和粗细 */
+    border-radius: 5px;           /* 圆角边框 */
+    font-size: 16px;              /* 调整字体大小 */
+    outline: none;                /* 移除点击时的默认轮廓线 */
+}
+
+#phoneNumberInput:focus {
+    border-color: #0056b3;        /* 焦点状态下的边框颜色 */
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5); /* 焦点状态下的阴影效果 */
+}
+
+/* 调整按钮样式以匹配输入框 */
+.action-button {
+    padding: 10px 20px;           /* 内边距调整 */
+    font-size: 16px;              /* 字体大小调整 */
+    background-color: #007bff;    /* 背景色 */
+    color: white;                 /* 文本颜色 */
+    border: none;                 /* 无边框 */
+    border-radius: 5px;           /* 圆角 */
+    cursor: pointer;              /* 鼠标样式 */
+    margin: 10px 0;               /* 外边距调整 */
+}
+
+.action-button:hover {
+    background-color: #0056b3;    /* 悬停时的背景颜色变化 */
+}

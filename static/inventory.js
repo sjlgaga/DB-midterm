@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('请输入手机号！');
             return;
         } else if (!phoneRegex.test(phoneNumber)) {
-            alert('手机号必须是11位数字！');
+            alert('手机号必须是11位数字!');
             return;
         }
         createOrder(phoneNumber, shopId);
@@ -223,11 +223,13 @@ document.addEventListener('DOMContentLoaded', function() {
             teaOrderList.innerHTML = '';
             teas.forEach(tea => {
                 const teaDiv = document.createElement('div');
-                teaDiv.innerHTML = `${tea.TeaName} <button onclick="updateQuantity(${tea.TeaID}, -1)">-</button> <input type="number" id="tea${tea.TeaID}" value="0" min="0"> <button onclick="updateQuantity(${tea.TeaID}, 1)">+</button>`;
+                teaDiv.innerHTML = `${tea.TeaName} <button onclick="updateQuantity('${tea.TeaID}', -1)">-</button> <input type="number" class="order-quantity" id="tea${tea.TeaID}" value="0" min="0"> <button onclick="updateQuantity('${tea.TeaID}', 1)">+</button>`;
                 teaOrderList.appendChild(teaDiv);
             });
         });
     }
+    
+    
 
     window.updateQuantity = function(teaId, change) {
         const inputField = document.getElementById(`tea${teaId}`);
@@ -238,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.submitOrder = function() {
         const orderDetails = [];
-        document.querySelectorAll('input[type="number"]').forEach(input => {
+        document.querySelectorAll('.order-quantity').forEach(input => {
             const teaId = input.id.replace('tea', '');
             const quantity = parseInt(input.value);
             if (quantity > 0) {

@@ -191,3 +191,18 @@ def get_comments_for_shop(shop_id):
     cursor.close()
     conn.close()
     return comments
+
+def add_comment_to_db(username, shop_id, content):
+    """将评论添加到数据库"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('INSERT INTO Comments (Username, ShopID, Content) VALUES (?, ?, ?)', (username, shop_id, content))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error adding comment: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()

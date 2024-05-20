@@ -118,6 +118,20 @@ def get_comments(shop_id):
         return jsonify(comments)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/addComment/<int:shop_id>', methods=['POST'])
+def add_comment(shop_id):
+    """添加评论到店铺"""
+    data = request.get_json()
+    username = data.get('Username')
+    content = data.get('Content')
+    if not username or not content:
+        return jsonify({'success': False, 'message': '用户名和评论内容不能为空'}), 400
+
+    if dbu.add_comment_to_db(username, shop_id, content):
+        return jsonify({'success': True}), 201
+    else:
+        return jsonify({'success': False, 'message': '添加评论失败'}), 500
 
 
 if __name__ == '__main__':

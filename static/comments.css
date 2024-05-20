@@ -37,3 +37,43 @@ h1 {
 .comment-item:last-child {
     margin-bottom: 0; /* 最后一个项目不需要底部边距 */
 }
+
+/* 输入框和文本区域的通用样式 */
+#addCommentForm input[type="text"],
+#addCommentForm textarea {
+    width: 100%;                 /* 全宽度，适应容器宽度 */
+    padding: 12px 20px;          /* 舒适的内边距 */
+    margin: 8px 0;               /* 适当的间距 */
+    display: inline-block;       /* 行内块显示 */
+    border: 1px solid #ccc;      /* 灰色边框 */
+    border-radius: 4px;          /* 圆角 */
+    box-sizing: border-box;      /* 盒模型，边框和内边距不会增加宽度 */
+    font-size: 16px;             /* 较大的字体大小，易读 */
+}
+
+#addCommentForm textarea {
+    height: 150px;               /* 设置较大的高度，适合输入评论 */
+    resize: none;                /* 禁止调整大小 */
+}
+
+#addCommentForm input[type="text"]:focus,
+#addCommentForm textarea:focus {
+    border-color: #4A90E2;       /* 聚焦时边框颜色 */
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.5); /* 聚焦时的阴影效果，增加用户体验 */
+}
+
+/* 提交按钮的样式 */
+#addCommentForm button {
+    background-color: #4CAF50;   /* 鲜绿色背景 */
+    color: white;                /* 白色文字 */
+    padding: 14px 20px;          /* 舒适的内边距 */
+    margin: 8px 0;               /* 适当的间距 */
+    border: none;                /* 无边框 */
+    border-radius: 4px;          /* 圆角 */
+    cursor: pointer;             /* 鼠标悬停时指针样式 */
+    font-size: 16px;             /* 较大的字体大小 */
+}
+
+#addCommentForm button:hover {
+    background-color: #45a049;   /* 鼠标悬停时的背景颜色 */
+}
