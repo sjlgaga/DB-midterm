@@ -1,28 +1,27 @@
 // inventory.js
+
 document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const shopId = params.get('shopId');
     const refreshButton = document.getElementById('refreshInventoryButton');
-
-    // 封装加载库存列表的函数
-    function loadInventory() {
-        fetch(`/api/shopInventory/${shopId}`)
-            .then(response => response.json())
-            .then(data => {
-                const inventoryList = document.getElementById('inventoryList');
-                inventoryList.innerHTML = ''; // 清空当前内容
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'inventory-item';
-                    div.innerHTML = `<strong>奶茶名称：</strong>${item.teaName}<br>
-                                     <strong>配料：</strong>${item.ingredients}<br>
-                                     <strong>库存：</strong>${item.stock}杯`;
-                    inventoryList.appendChild(div);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
+        // 封装加载库存列表的函数
+        function loadInventory() {
+            fetch(`/api/shopInventory/${shopId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const inventoryList = document.getElementById('inventoryList');
+                    inventoryList.innerHTML = ''; // 清空当前内容
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'inventory-item';
+                        div.innerHTML = `<strong>奶茶名称：</strong>${item.teaName}<br>
+                                         <strong>配料：</strong>${item.ingredients}<br>
+                                         <strong>库存：</strong>${item.stock}杯`;
+                        inventoryList.appendChild(div);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
     // 页面加载时加载库存
     loadInventory();
 
@@ -40,6 +39,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const shopId = params.get('shopId');
 
     // 加载可用奶茶列表
+
+     // 封装加载库存列表的函数
+     function loadInventory() {
+        fetch(`/api/shopInventory/${shopId}`)
+            .then(response => response.json())
+            .then(data => {
+                const inventoryList = document.getElementById('inventoryList');
+                inventoryList.innerHTML = ''; // 清空当前内容
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'inventory-item';
+                    div.innerHTML = `<strong>奶茶名称：</strong>${item.teaName}<br>
+                                     <strong>配料：</strong>${item.ingredients}<br>
+                                     <strong>库存：</strong>${item.stock}杯`;
+                    inventoryList.appendChild(div);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     function loadTeaOptions() {
         fetch('/api/teaOptions')
             .then(response => response.json())
@@ -74,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(result);
             alert('库存已更新！');
             addTeaModal.style.display = 'none';
+            loadInventory();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -89,6 +109,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const shopId = new URLSearchParams(window.location.search).get('shopId');
 
     // 函数：加载可删除的奶茶列表
+     // 封装加载库存列表的函数
+     function loadInventory() {
+        fetch(`/api/shopInventory/${shopId}`)
+            .then(response => response.json())
+            .then(data => {
+                const inventoryList = document.getElementById('inventoryList');
+                inventoryList.innerHTML = ''; // 清空当前内容
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'inventory-item';
+                    div.innerHTML = `<strong>奶茶名称：</strong>${item.teaName}<br>
+                                     <strong>配料：</strong>${item.ingredients}<br>
+                                     <strong>库存：</strong>${item.stock}杯`;
+                    inventoryList.appendChild(div);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     function loadDeleteOptions() {
         fetch('/api/teaOptions')
             .then(response => response.json())
@@ -134,6 +173,97 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
     
-
-    
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const shopId = new URLSearchParams(window.location.search).get('shopId');
+    const startOrderButton = document.getElementById('startOrderButton');
+    const phoneNumberInput = document.getElementById('phoneNumberInput');
+    const orderInterface = document.getElementById('orderInterface');
+    const teaOrderList = document.getElementById('teaOrderList');
+    let currentOrderId = null;
+
+    startOrderButton.onclick = function() {
+        const phoneNumber = phoneNumberInput.value;
+        const phoneRegex = /^\d{11}$/;  // 正则表达式，检查是否是11位数字
+
+        if (!phoneNumber) {
+            alert('请输入手机号！');
+            return;
+        } else if (!phoneRegex.test(phoneNumber)) {
+            alert('手机号必须是11位数字！');
+            return;
+        }
+        createOrder(phoneNumber, shopId);
+    };
+
+    function createOrder(phoneNumber, shopId) {
+        fetch(`/api/createOrder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ PhoneNumber: phoneNumber, ShopID: shopId })
+        })
+        .then(response => response.json())
+        .then(order => {
+            if (order.orderID) {
+                currentOrderId = order.orderID; // 保存订单ID
+                orderInterface.style.display = 'block';
+                loadTeas(shopId);
+            } else {
+                alert('订单创建失败：' + order.message);
+            }
+        })
+        .catch(error => console.error('Error creating order:', error));
+    }
+
+    function loadTeas() {
+        fetch(`/api/teaOptions/${shopId}`)
+        .then(response => response.json())
+        .then(teas => {
+            teaOrderList.innerHTML = '';
+            teas.forEach(tea => {
+                const teaDiv = document.createElement('div');
+                teaDiv.innerHTML = `${tea.TeaName} <button onclick="updateQuantity(${tea.TeaID}, -1)">-</button> <input type="number" id="tea${tea.TeaID}" value="0" min="0"> <button onclick="updateQuantity(${tea.TeaID}, 1)">+</button>`;
+                teaOrderList.appendChild(teaDiv);
+            });
+        });
+    }
+
+    window.updateQuantity = function(teaId, change) {
+        const inputField = document.getElementById(`tea${teaId}`);
+        let currentValue = parseInt(inputField.value);
+        currentValue = Math.max(0, currentValue + change);
+        inputField.value = currentValue;
+    };
+
+    window.submitOrder = function() {
+        const orderDetails = [];
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            const teaId = input.id.replace('tea', '');
+            const quantity = parseInt(input.value);
+            if (quantity > 0) {
+                orderDetails.push({ teaId: teaId, quantity: quantity });
+            }
+        });
+    
+        fetch(`/api/submitOrder/${shopId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: currentOrderId, orderDetails: orderDetails })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('订单提交成功！');
+                location.reload(); // 刷新页面或做其他的页面清理工作
+            } else {
+                alert('订单提交失败：' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting order:', error);
+            alert('订单提交失败！');
+        });
+    };
+});
+

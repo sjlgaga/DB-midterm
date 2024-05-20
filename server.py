@@ -102,6 +102,32 @@ def get_all_teas():
     conn.close()
     return teas
 
+def get_teas_for_shop(shop_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # SQL 查询将 TeaInventory 和 TeaDrinks 表进行联接
+    sql_query = """
+    SELECT d.TeaName, i.TeaID
+    FROM TeaInventory i
+    JOIN TeaDrinks d ON i.TeaID = d.TeaID
+    WHERE i.ShopID = ?
+    """
+
+    # 执行参数化查询
+    cursor.execute(sql_query, (shop_id,))
+    results = cursor.fetchall()
+
+    # 格式化查询结果为字典列表
+    tea_list = [{
+        "TeaName": row[0],
+        "TeaID": row[1],
+    } for row in results]
+
+    cursor.close()
+    conn.close()
+    return tea_list
+
 def add_tea_to_shop_inventory(shop_id, tea_id, stock):
     """将奶茶及其库存数量添加到指定店铺的库存中"""
     conn = get_db_connection()
@@ -139,6 +165,30 @@ def remove_tea_from_inventory(shop_id, tea_id):
     except Exception as e:
         print(f"Error: {e}")  # 打印错误信息（在生产环境中考虑使用日志记录）
         return False  # 处理异常情况
+    
+def create_order_in_database(phone_number, shop_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO Orders (PhoneNumber, ShopID) VALUES (?, ?)', (phone_number, shop_id))
+    conn.commit()
+    order_id = cursor.execute('SELECT @@IDENTITY').fetchval()
+    cursor.close()
+    conn.close()
+    return order_id
+
+def insert_order_details(order_id, tea_id, quantity):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('INSERT INTO OrderDetails (OrderID, TeaID, Quantity) VALUES (?, ?, ?)', (order_id, tea_id, int(quantity)))
+        conn.commit()
+    except Exception as e:
+        print("An error occurred:", e)
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+    return True
 
 
 """
@@ -180,6 +230,12 @@ def get_tea_options():
     teas = get_all_teas()
     return jsonify(teas)
 
+@app.route('/api/teaOptions/<int:shop_id>', methods=['GET'])
+def get_tea_shops(shop_id):
+    teas = get_teas_for_shop(shop_id)  # 假设这个函数根据店铺ID从数据库获取奶茶
+    return jsonify(teas)
+
+
 @app.route('/api/addInventory/<int:shop_id>', methods=['POST'])
 def add_inventory(shop_id):
     """API端点,添加奶茶到指定店铺的库存"""
@@ -198,6 +254,43 @@ def delete_inventory(shop_id, tea_id):
         return jsonify({'result': 'success'}), 200  # 成功删除
     else:
         return jsonify({'result': 'failure', 'message': 'No matching record found or error occurred'}), 404  # 未找到记录或出现错误
+    
+@app.route('/api/createOrder', methods=['POST'])
+def create_order():
+    data = request.get_json()
+    phone_number = data.get('PhoneNumber')
+    shop_id = data.get('ShopID')
+
+    if not phone_number or not shop_id:
+        return jsonify({'error': 'Missing required parameters'}), 400
+
+    try:
+        order_id = create_order_in_database(phone_number, shop_id)
+        return jsonify({'orderID': order_id, 'message': 'Order created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/submitOrder/<int:shop_id>', methods=['POST'])
+def submit_order(shop_id):
+    data = request.get_json()
+    order_details = data.get('orderDetails')
+    order_id = data.get('orderId')  # 假设前端会发送orderId
+
+    if not order_id:
+        return jsonify({'success': False, 'message': 'Missing order ID'}), 400
+
+    success = True
+    for detail in order_details:
+        tea_id = detail.get('teaId')
+        quantity = detail.get('quantity')
+        if not insert_order_details(order_id, tea_id, quantity):
+            success = False
+            break
+
+    if success:
+        return jsonify({'success': True, 'message': 'Order submitted successfully'}), 200
+    else:
+        return jsonify({'success': False, 'message': 'Failed to submit order details'}), 500
 
 
 
