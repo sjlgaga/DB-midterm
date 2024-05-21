@@ -86,14 +86,32 @@ def get_inventory_by_shop(shop_id):
     return inventory_list
 
 def get_all_teas():
-    """从数据库中获取所有奶茶选项"""
+    """从数据库中获取所有奶茶选项，包括各自的配料列表"""
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT TeaID, TeaName, Ingredients FROM TeaDrinks')
-    teas = [{'TeaID': row[0], 'TeaName': row[1], 'Ingredients': row[2]} for row in cursor.fetchall()]
+    # 使用 SQL JOIN 来获取奶茶以及对应的配料信息
+    cursor.execute('''
+        SELECT t.TeaID, t.TeaName, i.IngredientName
+        FROM TeaDrinks t
+        LEFT JOIN TeaIngredients ti ON t.TeaID = ti.TeaID
+        LEFT JOIN Ingredients i ON ti.IngredientID = i.IngredientID
+        ORDER BY t.TeaID, i.IngredientID
+    ''')
+    raw_teas = cursor.fetchall()
     cursor.close()
     conn.close()
-    return teas
+
+    # 对返回的数据进行处理，组合成奶茶及其配料的结构
+    teas = {}
+    for tea_id, tea_name, ingredient in raw_teas:
+        if tea_id not in teas:
+            teas[tea_id] = {'TeaID': tea_id, 'TeaName': tea_name, 'Ingredients': []}
+        if ingredient:  # 确保非空配料被添加
+            teas[tea_id]['Ingredients'].append(ingredient)
+
+    # 由于使用字典收集数据，我们需要转换回列表
+    return list(teas.values())
+
 
 def get_teas_for_shop(shop_id):
     conn = get_db_connection()

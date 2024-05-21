@@ -59,10 +59,52 @@ CREATE TABLE Comments (
     CONSTRAINT FK_Comments_ShopID FOREIGN KEY (ShopID) REFERENCES TeaShops(ShopID) -- 外键约束，引用TeaShops表
 );
 
-INSERT INTO TeaDrinks (TeaName, Ingredients)
+
+CREATE TABLE Ingredients (
+    IngredientID INT PRIMARY KEY IDENTITY(1,1),
+    IngredientName NVARCHAR(255)
+);
+
+
+CREATE TABLE TeaIngredients (
+    TeaID INT,
+    IngredientID INT,
+    PRIMARY KEY (TeaID, IngredientID),
+    FOREIGN KEY (TeaID) REFERENCES TeaDrinks(TeaID),
+    FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID)
+);
+
+INSERT INTO TeaDrinks (TeaName)
 VALUES 
-(N'椰椰芒芒', N'椰果, 新鲜芒果片'),
-(N'黑糖波波牛乳茶', N'黑糖珍珠'),
-(N'抹茶红豆奶茶', N'抹茶, 红豆'),
-(N'桂花乌龙茶', N'桂花, 乌龙茶叶'),
-(N'芝士蓝莓茶', N'芝士奶盖, 蓝莓');
+(N'椰椰芒芒'),
+(N'黑糖波波牛乳茶'),
+(N'抹茶红豆奶茶'),
+(N'桂花乌龙茶'),
+(N'芝士蓝莓茶');
+
+INSERT INTO Ingredients (IngredientName)
+VALUES 
+('椰果'),
+('新鲜芒果片'),
+('黑糖珍珠'),
+('抹茶'),
+('红豆'),
+('桂花'),
+('乌龙茶叶'),
+('芝士奶盖'),
+('蓝莓');
+
+-- 假设 '椰椰芒芒' 的 TeaID 是 1, '椰果' 的 IngredientID 是 1, '新鲜芒果片' 的 IngredientID 是 2
+INSERT INTO TeaIngredients (TeaID, IngredientID)
+VALUES 
+(1, 1),
+(1, 2),
+(2, 3),  -- 假设 '黑糖波波牛乳茶' 的 TeaID 是 2, '黑糖珍珠' 的 IngredientID 是 3
+(3, 4),  -- '抹茶'
+(3, 5),  -- '红豆'
+(4, 6),  -- '桂花'
+(4, 7),  -- '乌龙茶叶'
+(5, 8),  -- '芝士奶盖'
+(5, 9);  -- '蓝莓'
+
+
